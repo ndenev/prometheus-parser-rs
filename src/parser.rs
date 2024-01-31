@@ -247,6 +247,10 @@ impl PrometheusParser {
         Ok(input.as_str().trim().to_string())
     }
 
+    fn function_agg_name(input: Node) -> Result<String> {
+        Ok(input.as_str().trim().to_string())
+    }
+
     fn function_agg_op_by(_input: Node) -> Result<AggregationOp> {
         Ok(AggregationOp::By)
     }
@@ -287,6 +291,7 @@ impl PrometheusParser {
         for child in input.children() {
             match child.as_rule() {
                 Rule::function_name => name = Some(PrometheusParser::function_name(child)?),
+                Rule::function_agg_name => name = Some(PrometheusParser::function_agg_name(child)?),
                 Rule::expression => args.push(Box::new(PrometheusParser::expression(child)?)),
                 Rule::function_agg => aggregation = Some(PrometheusParser::function_agg(child)?),
                 Rule::subquery => subquery = Some(PrometheusParser::subquery(child)?),
